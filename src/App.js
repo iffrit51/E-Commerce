@@ -53,7 +53,7 @@ const App = () => {
           <Route exact path="/">
             <Produits produits={produits} onAddToPanier={handleAddToPanier} />
           </Route>
-          <Route exact path="/Panier">
+          <Route exact path="/panier">
             <Panier panier={panier}
             onUpdateCartQty={handleUpdatePanierQty}
             onRemoveFromCart={handleRemoveFromPanier}
@@ -61,7 +61,7 @@ const App = () => {
             />
           </Route>
           <Route exact path="/checkout">
-            <Checkout />
+            <Checkout panier={panier}/>
           </Route>
         </Switch>
       </div>
