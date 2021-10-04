@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { commerce } from '../../lib/commerce';
 import FormInput from './CustomTextField';
-import {useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { ContactSupportOutlined } from '@material-ui/icons';
 
 const AddressForm = ({ checkoutToken }) => {
@@ -18,22 +18,28 @@ const AddressForm = ({ checkoutToken }) => {
     const methods = useForm();
     const history = useHistory();
 
-    const countries = Object.entries(shippingCountries).map(([code,name]) => ({id:code,label:name}));
+    const countries = Object.entries(shippingCountries).map(([code, name]) => ({ id: code, label: name }));
+    const subdivisions = Object.entries(shippingSubdivisions).map(([code, name]) => ({ id: code, label: name }));
 
     const fetchShippingCountries = async (checkoutTokenId) => {
-        const {countries}  = await commerce.services.localeListShippingCountries(checkoutTokenId);
+        const { countries } = await commerce.services.localeListShippingCountries(checkoutTokenId);
         setShippingCountries(countries);
         setShippingCountry(Object.keys(countries)[0]);
     };
 
+    const fetchSubdivisions = async (countryCode) => {
+        const { subdivisions } = await commerce.services.localeListSubdivisions(countryCode);
+        setShippingSubdivisions(subdivisions);
+        setShippingSubdivision(Object.keys(subdivisions)[0]);
+    };
+
     useEffect(() => {
-        try{
-            fetchShippingCountries(checkoutToken.id);
-        }
-        catch(error){
-            history.push('/');
-        }
+        fetchShippingCountries(checkoutToken.id);
     }, [checkoutToken]);
+
+    useEffect(() => {
+        if (shippingCountry) fetchSubdivisions(shippingCountry);
+    }, [shippingCountry]);
 
     return (
         <>
@@ -48,24 +54,26 @@ const AddressForm = ({ checkoutToken }) => {
                         <FormInput required name="ville" label="Ville" />
                         <FormInput required name="code_postal" label="Code Postal" />
                         <Grid item xs={12} sm={6}>
-                            <InputLabel>Shipping Country</InputLabel>
+                            <InputLabel>Pays</InputLabel>
                             <Select value={shippingCountry} fullWidth onChange={(e) => setShippingCountry(e.target.value)}>
-                                {Object.entries(shippingCountries).map(([code, name]) => ({ id: code, label: name })).map((item) => (
-                                    <MenuItem key={item.id} value={item.id}>
-                                        {item.label}
+                                {countries.map((country) => (
+                                    <MenuItem key={country.id} value={country.id}>
+                                        {country.label}
                                     </MenuItem>
                                 ))}
                             </Select>
                         </Grid>
-                        {/* <Grid item xs={12} sm={6}>
-                            <InputLabel>Shipping Subdivisions</InputLabel>
-                            <Select value={ } fullWidth onChange={ }>
-                                <MenuItem key={ } value={ }>
-                                    Select Me
-                                </MenuItem>
+                        <Grid item xs={12} sm={6}>
+                            <InputLabel>Département</InputLabel>
+                            <Select value={shippingSubdivision} fullWidth onChange={(e) => setShippingSubdivision(e.target.value)}>
+                                {subdivisions.map((subdivision) => (
+                                    <MenuItem key={subdivision.id} value={subdivision.id}>
+                                        {subdivision.label}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        {/*<Grid item xs={12} sm={6}>
                             <InputLabel>Shipping Options</InputLabel>
                             <Select value={ } fullWidth onChange={ }>
                                 <MenuItem key={ } value={ }>
