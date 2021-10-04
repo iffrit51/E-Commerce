@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 
 import { commerce } from '../../lib/commerce';
 import FormInput from './CustomTextField';
+import {useHistory } from 'react-router-dom';
+import { ContactSupportOutlined } from '@material-ui/icons';
 
 const AddressForm = ({ checkoutToken }) => {
     const [shippingCountries, setShippingCountries] = useState([]);
@@ -14,19 +16,24 @@ const AddressForm = ({ checkoutToken }) => {
     const [shippingOptions, setShippingOptions] = useState([]);
     const [shippingOption, setShippingOption] = useState('');
     const methods = useForm();
+    const history = useHistory();
 
     const countries = Object.entries(shippingCountries).map(([code,name]) => ({id:code,label:name}));
 
     const fetchShippingCountries = async (checkoutTokenId) => {
         const {countries}  = await commerce.services.localeListShippingCountries(checkoutTokenId);
-
         setShippingCountries(countries);
         setShippingCountry(Object.keys(countries)[0]);
     };
 
-    /*useEffect(() => {
-        fetchShippingCountries(checkoutToken.id);
-    }, [checkoutToken.id]);*/
+    useEffect(() => {
+        try{
+            fetchShippingCountries(checkoutToken.id);
+        }
+        catch(error){
+            history.push('/');
+        }
+    }, [checkoutToken]);
 
     return (
         <>

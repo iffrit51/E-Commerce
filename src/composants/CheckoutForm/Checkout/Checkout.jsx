@@ -39,7 +39,7 @@ const Checkout = ({panier}) => {
     );
 
     const Form = () => activeStep === 0
-        ? <AddressForm />
+        ? <AddressForm checkoutToken={checkoutToken} />
         : <PaymentForm />
 
     return (
