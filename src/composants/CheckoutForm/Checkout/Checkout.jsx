@@ -13,6 +13,7 @@ const steps = ['Shipping address', 'Payement details'];
 const Checkout = ({panier}) => {
     const [activeStep, setActiveStep] = useState(0);
     const [checkoutToken, setCheckoutToken] = useState(null);
+    const [shippingData,setShippingData] = useState({});
     const classes = useStyles();
     const history = useHistory();
 
@@ -32,6 +33,14 @@ const Checkout = ({panier}) => {
         //}
     }, [panier, history]);
 
+    const nextStep = () => setActiveStep((prevActiveStep) => prevActiveStep +1);
+    const backStep = () => setActiveStep((prevActiveStep) => prevActiveStep -1);
+
+    const next = (data) =>{
+        setShippingData(data);
+        nextStep();
+    }
+
     const Confirmation = () => (
         <div>
             Confirmation
@@ -39,15 +48,15 @@ const Checkout = ({panier}) => {
     );
 
     const Form = () => activeStep === 0
-        ? <AddressForm checkoutToken={checkoutToken} />
-        : <PaymentForm />
+        ? <AddressForm checkoutToken={checkoutToken} newt={next} />
+        : <PaymentForm shippingData={shippingData}/>
 
     return (
         <>
             <div className={classes.toolbar} />
             <main className={classes.layout}>
                 <Paper className={classes.paper}>
-                    <Typography variant="h4" align="center">Checkout</Typography>
+                    <Typography variant="h4" align="center">Commande</Typography>
                     <Stepper activeStep={activeStep} className={classes.stepper}>
                         {steps.map((step) => (
                             <Step key={step}>
