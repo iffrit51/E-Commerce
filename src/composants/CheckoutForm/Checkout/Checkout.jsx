@@ -18,11 +18,9 @@ const Checkout = ({panier}) => {
     const history = useHistory();
 
     useEffect(() => {
-        //if (panier.id) {
             const generateToken = async () => {
                 try {
                     const token = await commerce.checkout.generateToken(panier.id, { type: 'cart' });
-                    console.log("token");
                     setCheckoutToken(token);
                 }
                 catch (error) {
@@ -30,7 +28,6 @@ const Checkout = ({panier}) => {
                 }
             };
             generateToken();
-        //}
     }, [panier, history]);
 
     const nextStep = () => setActiveStep((prevActiveStep) => prevActiveStep +1);
@@ -48,8 +45,8 @@ const Checkout = ({panier}) => {
     );
 
     const Form = () => activeStep === 0
-        ? <AddressForm checkoutToken={checkoutToken} newt={next} />
-        : <PaymentForm shippingData={shippingData}/>
+        ? <AddressForm checkoutToken={checkoutToken} next={next} />
+        : <PaymentForm shippingData={shippingData} backStep={backStep} checkoutToken={checkoutToken} />
 
     return (
         <>

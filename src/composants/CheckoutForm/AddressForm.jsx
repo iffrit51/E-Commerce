@@ -22,6 +22,7 @@ const AddressForm = ({ checkoutToken, next }) => {
     const subdivisions = Object.entries(shippingSubdivisions).map(([code, name]) => ({ id: code, label: name }));
     const options = shippingOptions.map((sO) => ({ id: sO.id, label: `${sO.description} - (${sO.price.formatted_with_symbol})` }));
 
+    console.log(options);
     const fetchShippingCountries = async (checkoutTokenId) => {
         const { countries } = await commerce.services.localeListShippingCountries(checkoutTokenId);
         setShippingCountries(countries);
@@ -36,8 +37,8 @@ const AddressForm = ({ checkoutToken, next }) => {
 
     const fetchShippingOptions = async (checkoutTokenId, country, region = null) => {
         const options = await commerce.checkout.getShippingOptions(checkoutTokenId, { country, region: region });
-        setShippingSubdivisions(options);
-        setShippingSubdivision(options[0].id);
+        setShippingOptions(options);
+        setShippingOption(options[0].id);
     };
 
     useEffect(() => {
@@ -50,13 +51,13 @@ const AddressForm = ({ checkoutToken, next }) => {
 
     useEffect(() => {
         if (shippingSubdivision) fetchShippingOptions(checkoutToken.id, shippingCountry, shippingSubdivision);
-    }, [shippingSubdivision]);
+    }, [checkoutToken,shippingCountry,shippingSubdivision]);
 
     return (
         <>
             <Typography variant="h6" gutterBottom>Adresse de livraison</Typography>
             <FormProvider {...methods}>
-                <form onSubmit={methods.handleSubmit((data) => next(...data, shippingCountry, shippingSubdivision, shippingOption))}>
+                <form onSubmit={methods.handleSubmit((data) => next(data, shippingCountry, shippingSubdivision, shippingOption))}>
                     <Grid container spacing={3}>
                         <FormInput required name="prenom" label="Prénom" />
                         <FormInput required name="nom" label="Nom" />
@@ -87,9 +88,9 @@ const AddressForm = ({ checkoutToken, next }) => {
                         <Grid item xs={12} sm={6}>
                             <InputLabel>Options de livraison</InputLabel>
                             <Select value={shippingOption} fullWidth onChange={(e) => setShippingOption(e.target.value)}>
-                                {shippingOptions.map((sO) => ({ id: sO.id, label: `${sO.description} - (${sO.price.formatted_with_symbol})` })).map((item) => (
-                                    <MenuItem key={item.id} value={item.id}>
-                                        {item.label}
+                                {options.map((option) => (
+                                    <MenuItem key={option.id} value={option.id}>
+                                        {option.label}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -97,7 +98,7 @@ const AddressForm = ({ checkoutToken, next }) => {
                     </Grid>
                     <br />
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Button component={Link} to="/cart" variant="outlined">Retour au panier</Button>
+                        <Button component={Link} to="/panier" variant="outlined">Retour au panier</Button>
                         <Button type="submit" variant="contained" color="primary">Suivant</Button>
                     </div>
                 </form>
