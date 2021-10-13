@@ -7,7 +7,7 @@ import useStyles from './styles';
 const Produits = ({produits,onAddToPanier}) => {
     const classes = useStyles();
 
-    if(!produits.length) return <p>Loading...</p>
+    if(!produits.length) return <p>Chargement...</p>
 
     return (
         <main className={classes.content}>
