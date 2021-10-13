@@ -7,9 +7,9 @@ import Revue from './Revue';
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
-const PaymentForm = ({ checkoutToken,backStep }) => {
+const PaymentForm = ({ checkoutToken,shippingData,backStep,onCaptureCheckout,nextStep }) => {
 
-    const handleSubmit = (event,elements,stripe) => {
+    const handleSubmit = async(event,elements,stripe) => {
         event.preventDefault();
 
         if(!stripe || !elements) return;
@@ -21,11 +21,27 @@ const PaymentForm = ({ checkoutToken,backStep }) => {
             console.log(error);
         }
         else{
-            const orderDate={
+            const orderData={
                 line_items:checkoutToken.live.line_item,
                 customer:{firstname:shippingData.FirstName,lastname:shippingData.LastName,email:shippingData.email},
-                shipping:{name:'Primary',street:shippingData.address1}
+                shipping:{
+                    name:'Primary',
+                    street:shippingData.address1,
+                    town_city:shippingData.city,
+                    country_state:shippingData.shippingSubdivision,
+                    postal_zip_code:shippingData.zip,
+                    country:shippingData.shippingCountry,
+                },
+                fullfillment:{shipping_method:shippingData.shippingOption},
+                payment:{
+                    gateway:'stripe',
+                    stripe:{
+                        payement_method_id:paymentMethod.id
+                    }
+                }
             }
+            onCaptureCheckout(checkoutToken.id,orderData);
+            nextStep();
         }
     }
 
