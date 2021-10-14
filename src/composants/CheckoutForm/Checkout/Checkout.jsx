@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import {Paper, Stepper, Step, StepLabel, Typography } from '@material-ui/core';
+import { CssBaseline, Paper, Stepper, Step, StepLabel, Typography, CircularProgress, Divider, Button } from '@material-ui/core';
+import { Link, useHistory } from 'react-router-dom';
 
 import { commerce } from '../../../lib/commerce';
-
 import AddressForm from '../AddressForm';
 import PaymentForm from '../PaymentForm';
 import useStyles from './styles';
-import {useHistory } from 'react-router-dom';
 
 const steps = ['Shipping address', 'Payement details'];
 
@@ -38,11 +37,30 @@ const Checkout = ({panier,order,onCaptureCheckout,error}) => {
         nextStep();
     }
 
-    const Confirmation = () => (
+    let Confirmation = () => order.customer ? (
+        <>
         <div>
-            Confirmation
+            <Typography variant="h5">Merci pour votre commande, {order.customer.firstname} {order.customer.lastname}</Typography>
+            <Divider className={classes.divider}/>
+            <Typography variant="subtitle2">Ref de la commande: {order.customer_reference}</Typography>
         </div>
+        <br />
+        <Button component={Link} to="/" variant="outlined" type="button">Retour à l'acceuil</Button>
+        </>
+        ):(
+            <div className={classes.spinner}>
+                <CircularProgress/>
+            </div>
     );
+    if(error){
+        <><CssBaseline />
+        <Typography variant="h5">Erreur: {error}</Typography>
+        <br />
+        <Button component={Link} to="/" variant="outlined" type="button">
+            Retour à l'accueil
+        </Button>
+        </>
+    }
 
     const Form = () => activeStep === 0
         ? <AddressForm checkoutToken={checkoutToken} next={next} />
@@ -52,6 +70,7 @@ const Checkout = ({panier,order,onCaptureCheckout,error}) => {
 
     return (
         <>
+        <CssBaseline />
             <div className={classes.toolbar} />
             <main className={classes.layout}>
                 <Paper className={classes.paper}>
