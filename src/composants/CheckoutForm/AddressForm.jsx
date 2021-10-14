@@ -5,8 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { commerce } from '../../lib/commerce';
 import FormInput from './CustomTextField';
-import { useHistory } from 'react-router-dom';
-import { ContactSupportOutlined } from '@material-ui/icons';
+//import { useHistory } from 'react-router-dom';
 
 const AddressForm = ({ checkoutToken, next }) => {
     const [shippingCountries, setShippingCountries] = useState([]);
@@ -16,13 +15,12 @@ const AddressForm = ({ checkoutToken, next }) => {
     const [shippingOptions, setShippingOptions] = useState([]);
     const [shippingOption, setShippingOption] = useState('');
     const methods = useForm();
-    const history = useHistory();
+    //const history = useHistory();
 
     const countries = Object.entries(shippingCountries).map(([code, name]) => ({ id: code, label: name }));
     const subdivisions = Object.entries(shippingSubdivisions).map(([code, name]) => ({ id: code, label: name }));
     const options = shippingOptions.map((sO) => ({ id: sO.id, label: `${sO.description} - (${sO.price.formatted_with_symbol})` }));
 
-    console.log(options);
     const fetchShippingCountries = async (checkoutTokenId) => {
         const { countries } = await commerce.services.localeListShippingCountries(checkoutTokenId);
         setShippingCountries(countries);
@@ -57,7 +55,7 @@ const AddressForm = ({ checkoutToken, next }) => {
         <>
             <Typography variant="h6" gutterBottom>Adresse de livraison</Typography>
             <FormProvider {...methods}>
-                <form onSubmit={methods.handleSubmit((data) => next(data, shippingCountry, shippingSubdivision, shippingOption))}>
+                <form onSubmit={methods.handleSubmit((data) => next({...data, shippingCountry, shippingSubdivision, shippingOption}))}>
                     <Grid container spacing={3}>
                         <FormInput required name="prenom" label="Prénom" />
                         <FormInput required name="nom" label="Nom" />

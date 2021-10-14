@@ -1,6 +1,5 @@
 import React from 'react';
 import { Typography, List, ListItem, ListItemText } from '@material-ui/core';
-import { PartyModeOutlined } from '@material-ui/icons';
 
 const Revue = ({ checkoutToken }) => {
     return (
@@ -15,7 +14,7 @@ const Revue = ({ checkoutToken }) => {
                 )}
                 <ListItem style={{padding: '10px 0'}}>
                         <ListItemText primary="Total" />
-                        <Typography variant="sous titre" style={{fontWeight: 700}}>
+                        <Typography variant="subtitle" style={{fontWeight: 700}}>
                             {checkoutToken.live.subtotal.formatted_with_symbol}
                             </Typography>
                     </ListItem>
