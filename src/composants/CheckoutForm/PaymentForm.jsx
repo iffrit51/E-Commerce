@@ -19,10 +19,9 @@ const PaymentForm = ({ checkoutToken, nextStep, backStep, shippingData, onCaptur
         const { error, paymentMethod } = await stripe.createPaymentMethod({ type: 'card', card: cardElement });
 
         if (error) {
-            console.log(error);
+            console.log(error.message);
         }
         else {
-            console.log(shippingData);
             const orderData = {
                 line_items: checkoutToken.live.line_items,
                 customer: { firstname: shippingData.firstname, lastname: shippingData.lastname, email: shippingData.email },
@@ -36,7 +35,7 @@ const PaymentForm = ({ checkoutToken, nextStep, backStep, shippingData, onCaptur
                 },
                 fulfillment: { shipping_method: shippingData.shippingOption },
                 payment: {
-                    gateway: "stripe",
+                    gateway: 'stripe',
                     stripe: {
                         payment_method_id: paymentMethod.id,
                     },
